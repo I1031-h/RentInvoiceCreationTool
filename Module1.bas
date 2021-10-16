@@ -305,6 +305,190 @@ If company_slots3 <> Officeinformation.Cells(11, 15) Then
 End If
 
 
+
+'///////所有者名が一致しているか///////
+
+'/////事務所/////
+Dim owner_number As Long
+Dim owner_number_check As Integer
+Dim adrs As String
+Dim blank_cnt As Long
+Dim blank_column_check As Integer
+
+owner_number = sh_.Rows(2).Find("小計").Column - 3
+owner_number_check = 0
+
+For i = 3 To owner_number
+
+    For q = 2 To Maximum_Line_Number
+
+        If sh_.Cells(32, i) = Officeinformation.Cells(q, 1) Then
+            owner_number_check = owner_number_check + 1
+        End If
+
+    Next q
+        
+        
+    For s = 2 To lastrow
+        
+        If sh_.Cells(s, i) = "" Then
+            blank_cnt = blank_cnt + 1
+        End If
+        
+        If blank_cnt = 31 Then
+            blank_column_check = blank_column_check + 1
+        End If
+    
+    Next s
+    
+    
+        If owner_number_check = 0 And blank_column_check = 0 Then
+            adrs = sh_.Cells(32, i).Address
+            Toollaunch.Activate
+            Toollaunch.Cells(officeinfo_error_row, 12) = "{不一致エラー} 家賃データブックの事務所シートのセル" & Split(adrs, "$")(1) & "32と事務所情報シートの所有者情報を一致させて下さい"
+            officeinfo_error_row = officeinfo_error_row + 1
+            exit_process = 1
+        End If
+        
+        blank_cnt = 0
+        owner_number_check = 0
+        blank_column_check = 0
+Next i
+
+
+'/////地方事務所/////
+Dim owner_number2 As Long
+Dim adrs2 As String
+
+owner_number2 = sh_2.Rows(2).Find("計").Column - 1
+
+For i = 3 To owner_number2
+
+    For q = 2 To Maximum_Line_Number
+
+        If sh_2.Cells(29, i) = Officeinformation.Cells(q, 1) Then
+            owner_number_check = owner_number_check + 1
+        End If
+
+    Next q
+        
+        
+    For s = 2 To lastrow2
+        
+        If sh_2.Cells(s, i) = "" Then
+            blank_cnt = blank_cnt + 1
+        End If
+        
+        If blank_cnt = 28 Then
+            blank_column_check = blank_column_check + 1
+        End If
+    
+    Next s
+    
+    
+        If owner_number_check = 0 And blank_column_check = 0 Then
+            adrs2 = sh_2.Cells(29, i).Address
+            Toollaunch.Activate
+            Toollaunch.Cells(officeinfo_error_row, 12) = "{不一致エラー} 家賃データブックの地方事務所シートのセル" & Split(adrs2, "$")(1) & "29と事務所情報シートの所有者情報を一致させて下さい"
+            officeinfo_error_row = officeinfo_error_row + 1
+            exit_process = 1
+        End If
+        
+        blank_cnt = 0
+        owner_number_check = 0
+        blank_column_check = 0
+Next i
+
+
+'/////男子寮/////
+Dim owner_number3 As Long
+Dim adrs3 As String
+
+owner_number3 = lastcolumn3 - 1
+
+For i = 3 To owner_number3
+
+    For q = 2 To Maximum_Line_Number
+
+        If sh_3.Cells(27, i) = Officeinformation.Cells(q, 1) Then
+            owner_number_check = owner_number_check + 1
+        End If
+
+    Next q
+        
+        
+    For s = 2 To lastrow3
+        
+        If sh_3.Cells(s, i) = "" Then
+            blank_cnt = blank_cnt + 1
+        End If
+        
+        If blank_cnt = 26 Then
+            blank_column_check = blank_column_check + 1
+        End If
+    
+    Next s
+    
+    
+        If owner_number_check = 0 And blank_column_check = 0 Then
+            adrs3 = sh_3.Cells(27, i).Address
+            Toollaunch.Activate
+            Toollaunch.Cells(officeinfo_error_row, 12) = "{不一致エラー} 家賃データブックの男子寮シートのセル" & Split(adrs3, "$")(1) & "27と事務所情報シートの所有者情報を一致させて下さい"
+            officeinfo_error_row = officeinfo_error_row + 1
+            exit_process = 1
+        End If
+        
+        blank_cnt = 0
+        owner_number_check = 0
+        blank_column_check = 0
+Next i
+
+
+'/////女子寮/////
+Dim owner_number4 As Long
+Dim adrs4 As String
+
+owner_number4 = lastcolumn4 - 1
+
+For i = 3 To owner_number4
+
+    For q = 2 To Maximum_Line_Number
+
+        If sh_4.Cells(27, i) = Officeinformation.Cells(q, 1) Then
+            owner_number_check = owner_number_check + 1
+        End If
+
+    Next q
+        
+        
+    For s = 2 To lastrow3
+        
+        If sh_4.Cells(s, i) = "" Then
+            blank_cnt = blank_cnt + 1
+        End If
+        
+        If blank_cnt = 26 Then
+            blank_column_check = blank_column_check + 1
+        End If
+    
+    Next s
+    
+    
+        If owner_number_check = 0 And blank_column_check = 0 Then
+            adrs4 = sh_4.Cells(27, i).Address
+            Toollaunch.Activate
+            Toollaunch.Cells(officeinfo_error_row, 12) = "{不一致エラー} 家賃データブックの女子寮シートのセル" & Split(adrs4, "$")(1) & "27と事務所情報シートの所有者情報を一致させて下さい"
+            officeinfo_error_row = officeinfo_error_row + 1
+            exit_process = 1
+        End If
+        
+        blank_cnt = 0
+        owner_number_check = 0
+        blank_column_check = 0
+Next i
+
+
+
 '//プロシージャの強制離脱//
 If exit_process = 1 Then
     
