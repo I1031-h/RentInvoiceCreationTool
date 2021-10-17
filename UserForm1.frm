@@ -254,7 +254,7 @@ End If
     '///////////////////////
    
    If x = Office_owner_have Then
-        For s = 3 To Office_owner_have2
+        For s = 3 To Office_owner_have2 + 2
             Dim aa As Range
             Dim aa1 As Range
         
@@ -379,7 +379,7 @@ newWorkBook = ActiveWorkbook.Name
     ProgressBar1.Caption = "地方事務所家賃請求書作成中"
     ProgressBar1.FrameProgress.Value = 0        ' 初期値
     ProgressBar1.FrameProgress.Min = 0          ' 最小値
-    ProgressBar1.FrameProgress.Max = 100        ' 最大値
+    ProgressBar1.FrameProgress.Max = Number_of_owners + 1        ' 最大値
 
     ' ユーザーフォームを表示する
     ProgressBar1.Show vbModeless
@@ -404,11 +404,11 @@ switch = 0
 
 
 
-For r = 2 To Number_of_owners
+For r = 2 To Number_of_owners + 1
     DoEvents
     
-    For q = 3 To Company_frame_count - 1
-        For e = 3 To Office_owner_have2
+    For q = 3 To Company_frame_count + 2
+        For e = 3 To Office_owner_have2 + 2
             
             Dim nn As Range
             Set nn = Extraction2.Columns(2).Find(what:="所有者", LookIn:=xlValues, lookat:=xlWhole)
@@ -502,7 +502,7 @@ For r = 2 To Number_of_owners
     Next q
     
     ' プログレスバーの値を設定
-    ProgressBar1.FrameProgress.Value = r / Number_of_owners * 100
+    ProgressBar1.FrameProgress.Value = r
     
 Next r
 
