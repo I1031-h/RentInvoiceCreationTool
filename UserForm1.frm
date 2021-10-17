@@ -90,8 +90,8 @@ Dim sh2 As Worksheet '地方事務所
     ProgressBar1.Repaint
     
 '///////////////固定の変数///////////////
-Office_count = Officeinformation.Range("O3").Value '現在の事務所数
-Regional_office_count = Officeinformation.Range("O6").Value '現在の地方事務所数
+Office_count = Officeinformation.Range("O3").Value '現在の事務所の枠数
+Regional_office_count = Officeinformation.Range("O6").Value '現在の地方事務所数の枠数
 Company_frame_count = Officeinformation.Range("O4").Value '現在の会社の枠数
 Number_of_owners = Officeinformation.Range("O1").Value '現在の所有者の人数
 k = 2  '事務所情報の行指標
@@ -114,7 +114,7 @@ switch = 0
 For roop = 1 To Number_of_owners '現在の所有者の人数分ループする
 DoEvents
 
-For z = 1 To Office_count '事務所の数分ループする
+For z = 1 To Office_count '事務所の枠数分ループする
 
 Set c = sh_.Columns(Office).Find(what:=Officeinformation.Cells(k, 1), LookIn:=xlValues, lookat:=xlWhole) '事務所情報の所有者が家賃一覧表の指定した列にいるか調べる
 
@@ -287,7 +287,7 @@ End If
                               ElseIf Office_rented = 6 Then
                                 ActiveSheet.Cells(i, j).Value = "=D28*F28"
                               End If
-                              Extraction2.Cells(aa.Row, s).Delete
+                              Extraction2.Cells(aa.Row, s) = ""
                           j = 2
                         i = i + 1
                         Next q
@@ -402,121 +402,109 @@ Office_owner_have = 0  '所有者が何個地方事務所を持っているか
 Number_of_office = 2  '何番目の地方事務所か数える
 switch = 0
 
-For roop = 1 To Number_of_owners
-
-DoEvents
 
 
-If roop = 1 Then
- Office = 3
- Else
- Office = Number_of_office - Office_owner_have + 1
- End If
- 
-For y = 1 To Company_frame_count
-
-If Office_owner_have = 0 Then
-Exit For
-End If
-
-  For x = 1 To Office_owner_have
-  DoEvents
-    If Extraction2.Cells(company, Office) <> "" Then
-     Set c2 = Officeinformation.Columns(1).Find(what:=Officeinformation.Cells(k, 1), LookIn:=xlValues, lookat:=xlWhole)
-     Set c3 = Officeinformation.Columns(10).Find(what:=Officeinformation.Cells(k, 10), LookIn:=xlValues, lookat:=xlWhole)
-    If Officeinformation.Cells(c2.Row, c3.Column) <> Extraction2.Cells(company, 2) Then  '同じ会社同士で請求書を送ろうとしていなければ
+For r = 2 To Number_of_owners
+    DoEvents
     
-    If ActiveSheet.Name = Worksheets(1).Name Then
-     Original.Copy After:=Sheets(Sheets.Count)
-    ActiveSheet.Name = Officeinformation.Cells(c2.Row, c3.Column).Value + "→" + Extraction2.Cells(company, 2)
-     Office_rented = Office_rented + 1
-      ActiveSheet.Cells(i, j).Value = seirekiComboBox.Text + "年" + monthComboBox.Text + "月分" + "（ " + Extraction2.Cells(2, Office) + " ）" + "家賃"
-      j = j + 2
-      ActiveSheet.Cells(i, j).Value = 1
-      j = j + 1
-      ActiveSheet.Cells(i, j).Value = "月"
-      j = j + 1
-      ActiveSheet.Cells(i, j).Value = Extraction2.Cells(company, Office) * 10000
-      j = j + 1
-        If Office_rented = 1 Then
-          ActiveSheet.Cells(i, j).Value = "=D23*F23"
-        ElseIf Office_rented = 2 Then
-          ActiveSheet.Cells(i, j).Value = "=D24*F24"
-        ElseIf Office_rented = 3 Then
-          ActiveSheet.Cells(i, j).Value = "=D25*F25"
-        ElseIf Office_rented = 4 Then
-          ActiveSheet.Cells(i, j).Value = "=D26*F26"
+    For q = 3 To Company_frame_count - 1
+        For e = 3 To Office_owner_have2
+            
+            Dim nn As Range
+            Set nn = Extraction2.Columns(2).Find(what:="所有者", LookIn:=xlValues, lookat:=xlWhole)
+            
+            If Extraction2.Cells(nn.Row, e) = Officeinformation.Cells(r, 1) Then
+                If Extraction2.Cells(q, 2) <> Extraction2.Cells(nn.Row, e) Then
+                    If Extraction2.Cells(q, e) <> "" Then
+                        
+                        
+                         Set c2 = Officeinformation.Columns(1).Find(what:=Officeinformation.Cells(r, 1), LookIn:=xlValues, lookat:=xlWhole)
+                         Set c3 = Officeinformation.Columns(10).Find(what:=Officeinformation.Cells(r, 10), LookIn:=xlValues, lookat:=xlWhole)
+                        
+                        If ActiveSheet.Name = Worksheets(1).Name Then
+                         Original.Copy After:=Sheets(Sheets.Count)
+                        ActiveSheet.Name = Officeinformation.Cells(c2.Row, c3.Column).Value + "→" + Extraction2.Cells(q, 2)
+                         Office_rented = Office_rented + 1
+                          ActiveSheet.Cells(i, j).Value = seirekiComboBox.Text + "年" + monthComboBox.Text + "月分" + "（ " + Extraction2.Cells(2, e) + " ）" + "家賃"
+                          j = j + 2
+                          ActiveSheet.Cells(i, j).Value = 1
+                          j = j + 1
+                          ActiveSheet.Cells(i, j).Value = "月"
+                          j = j + 1
+                          ActiveSheet.Cells(i, j).Value = Extraction2.Cells(q, e) * 10000
+                          j = j + 1
+                            If Office_rented = 1 Then
+                              ActiveSheet.Cells(i, j).Value = "=D23*F23"
+                            ElseIf Office_rented = 2 Then
+                              ActiveSheet.Cells(i, j).Value = "=D24*F24"
+                            ElseIf Office_rented = 3 Then
+                              ActiveSheet.Cells(i, j).Value = "=D25*F25"
+                            ElseIf Office_rented = 4 Then
+                              ActiveSheet.Cells(i, j).Value = "=D26*F26"
+                            End If
+                            Office_switch = 1
+                            j = 2
+                          i = i + 1
+                          Else
+                          Office_rented = Office_rented + 1
+                          ActiveSheet.Cells(i, j).Value = seirekiComboBox.Text + "年" + monthComboBox.Text + "月分" + "（ " + Extraction2.Cells(2, e) + " ）" + "家賃"
+                          j = j + 2
+                          ActiveSheet.Cells(i, j).Value = 1
+                          j = j + 1
+                          ActiveSheet.Cells(i, j).Value = "月"
+                          j = j + 1
+                          ActiveSheet.Cells(i, j).Value = Extraction2.Cells(q, e) * 10000
+                          j = j + 1
+                            If Office_rented = 1 Then
+                              ActiveSheet.Cells(i, j).Value = "=D23*F23"
+                            ElseIf Office_rented = 2 Then
+                              ActiveSheet.Cells(i, j).Value = "=D24*F24"
+                            ElseIf Office_rented = 3 Then
+                              ActiveSheet.Cells(i, j).Value = "=D25*F25"
+                            ElseIf Office_rented = 4 Then
+                              ActiveSheet.Cells(i, j).Value = "=D26*F26"
+                            End If
+                            Office_switch = 1
+                            j = 2
+                          i = i + 1
+                        End If
+                        
+                        
+                    End If
+                End If
+            End If
+        
+        
+        Next e
+        
+        If Office_switch = 1 Then
+          ActiveSheet.Range("B8").Value = "株式会社" + Extraction2.Cells(company, 2) + Space(2) + "御中"
+          ActiveSheet.Range("G3").Value = seirekiComboBox2.Text + "年" + monthComboBox2.Text + "月" + dayComboBox.Text + "日"
+          ActiveSheet.Range("C45").Value = seirekiComboBox3.Text + "年" + monthComboBox3.Text + "月" + dayComboBox2.Text + "日"
+          '///////////送り主の情報///////////
+          ActiveSheet.Range("F10").Value = Officeinformation.Cells(r, 2).Value
+          ActiveSheet.Range("F11").Value = Officeinformation.Cells(r, 3).Value
+          ActiveSheet.Range("F12").Value = Officeinformation.Cells(r, 4).Value
+          ActiveSheet.Range("F13").Value = Officeinformation.Cells(r, 5).Value
+          ActiveSheet.Range("F14").Value = Officeinformation.Cells(r, 6).Value
+          '/////////////取引銀行/////////////
+          ActiveSheet.Range("C41").Value = Officeinformation.Cells(r, 7).Value
+          ActiveSheet.Range("C42").Value = Officeinformation.Cells(r, 8).Value
+          ActiveSheet.Range("C43").Value = Officeinformation.Cells(r, 9).Value
+          
         End If
-        Office_switch = 1
-        j = 2
-      i = i + 1
-      Else
-      Office_rented = Office_rented + 1
-      ActiveSheet.Cells(i, j).Value = seirekiComboBox.Text + "年" + monthComboBox.Text + "月分" + "（ " + Extraction2.Cells(2, Office) + " ）" + "家賃"
-      j = j + 2
-      ActiveSheet.Cells(i, j).Value = 1
-      j = j + 1
-      ActiveSheet.Cells(i, j).Value = "月"
-      j = j + 1
-      ActiveSheet.Cells(i, j).Value = Extraction2.Cells(company, Office) * 10000
-      j = j + 1
-        If Office_rented = 1 Then
-          ActiveSheet.Cells(i, j).Value = "=D23*F23"
-        ElseIf Office_rented = 2 Then
-          ActiveSheet.Cells(i, j).Value = "=D24*F24"
-        ElseIf Office_rented = 3 Then
-          ActiveSheet.Cells(i, j).Value = "=D25*F25"
-        ElseIf Office_rented = 4 Then
-          ActiveSheet.Cells(i, j).Value = "=D26*F26"
-        End If
-        Office_switch = 1
-        j = 2
-      i = i + 1
-    End If
-    End If
-    End If
-      Office = Office + 1
-   Next
- 
- If Office_switch = 1 Then
-   ActiveSheet.Range("B8").Value = "株式会社" + Extraction2.Cells(company, 2) + Space(2) + "御中"
-   ActiveSheet.Range("G3").Value = seirekiComboBox2.Text + "年" + monthComboBox2.Text + "月" + dayComboBox.Text + "日"
-   ActiveSheet.Range("C45").Value = seirekiComboBox3.Text + "年" + monthComboBox3.Text + "月" + dayComboBox2.Text + "日"
-   '///////////送り主の情報///////////
-   ActiveSheet.Range("F10").Value = Officeinformation.Cells(k, 2).Value
-   ActiveSheet.Range("F11").Value = Officeinformation.Cells(k, 3).Value
-   ActiveSheet.Range("F12").Value = Officeinformation.Cells(k, 4).Value
-   ActiveSheet.Range("F13").Value = Officeinformation.Cells(k, 5).Value
-   ActiveSheet.Range("F14").Value = Officeinformation.Cells(k, 6).Value
-   '/////////////取引銀行/////////////
-   ActiveSheet.Range("C41").Value = Officeinformation.Cells(k, 7).Value
-   ActiveSheet.Range("C42").Value = Officeinformation.Cells(k, 8).Value
-   ActiveSheet.Range("C43").Value = Officeinformation.Cells(k, 9).Value
-   
- End If
- 
- If roop = 1 Then
- Office = 3
- Else
- Office = Number_of_office - Office_owner_have + 1
- End If
- 
- i = 23
- company = company + 1
- Office_switch = 0
- Office_rented = 0
- Worksheets(1).Activate
- DoEvents
-Next
-
-k = k + 1
-Office_owner_have = 0
-company = 3
-Office = 3
-' プログレスバーの値を設定
-ProgressBar1.FrameProgress.Value = roop / Number_of_owners * 100
-
-Next
+        
+        i = 23
+        Office_switch = 0
+        Office_rented = 0
+        Worksheets(1).Activate
+        DoEvents
+    Next q
+    
+    ' プログレスバーの値を設定
+    ProgressBar1.FrameProgress.Value = r / Number_of_owners * 100
+    
+Next r
 
 ' UserForm1を非表示にする
     Unload ProgressBar1
@@ -532,8 +520,6 @@ Application.DisplayAlerts = False
 
 wb.SaveAs FileFormat:=xlExcel8
 wb.Close SaveChanges:=False
-wb2.SaveAs FileFormat:=xlExcel8
-wb2.Close SaveChanges:=False
 Application.DisplayAlerts = True
 
 End Sub
