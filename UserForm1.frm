@@ -105,6 +105,7 @@ Company_column_copy_switch = 0 '会社の欄コピー
 Office_rented = 0  '1つの会社が何個事務所を借りているか
 Office_owner_have = 0  '所有者が何個事務所を持っているか
 Office_owner_have2 = 0
+offi_cnt = 0
 Number_of_office = 2  '何番目の事務所か数える
 Number_of_office2 = 2
 switch = 0
@@ -192,7 +193,7 @@ End If
     Set c2 = Officeinformation.Columns(1).Find(what:=Officeinformation.Cells(k, 1), LookIn:=xlValues, lookat:=xlWhole) '所有者
     Set c3 = Officeinformation.Columns(10).Find(what:=Officeinformation.Cells(k, 10), LookIn:=xlValues, lookat:=xlWhole) 'シート名
   If Officeinformation.Cells(c2.Row, c3.Column) <> Extraction.Cells(company, 2) Then  '同じ会社同士で請求書を送ろうとしていなければ
-    
+    offi_cnt = offi_cnt + 1
     If ActiveSheet.Name = Worksheets(1).Name Then '初回の作成
      Original.Copy After:=Sheets(Sheets.Count) '新規で作成した家賃請求書ブックのシート
      ' 再表示
@@ -254,7 +255,7 @@ End If
     '///////////////////////
    
    If x = Office_owner_have Then
-        For s = 3 To Office_owner_have2 + 2
+        For s = 3 To Number_of_office2 + 2
             Dim aa As Range
             Dim aa1 As Range
         
@@ -264,7 +265,9 @@ End If
                 If aa Is Nothing Then
                     Else
                     If Extraction2.Cells(aa.Row, s) <> "" And Extraction2.Cells(aa1.Row, s) = Officeinformation.Cells(k, 1) Then
-                        For q = 1 To 1
+                        
+                        If offi_cnt >= 1 Then
+                        
                             Office_rented = Office_rented + 1
                             ActiveSheet.Cells(i, j).Value = seirekiComboBox.Text + "年" + monthComboBox.Text + "月分" + "（ " + Extraction2.Cells(2, s) + " ）" + "家賃"
                             j = j + 2
@@ -289,8 +292,10 @@ End If
                               End If
                               Extraction2.Cells(aa.Row, s) = ""
                           j = 2
-                        i = i + 1
-                        Next q
+                          i = i + 1
+                        
+                        End If
+                        
                     End If
                 End If
             End If
@@ -335,6 +340,7 @@ End If
  company = company + 1 '次の会社を検索する準備
  Office_switch = 0
  Office_rented = 0
+ offi_cnt = 0
  Worksheets(1).Activate
  DoEvents
 Next
@@ -360,8 +366,6 @@ Set wb = ActiveWorkbook
 wb.SaveAs FileFormat:=xlExcel8
 wb.Close SaveChanges:=False
 Application.DisplayAlerts = True
-
-
 
 
 
@@ -478,7 +482,7 @@ For r = 2 To Number_of_owners + 1
         Next e
         
         If Office_switch = 1 Then
-          ActiveSheet.Range("B8").Value = "株式会社" + Extraction2.Cells(company, 2) + Space(2) + "御中"
+          ActiveSheet.Range("B8").Value = "株式会社" + Extraction2.Cells(q, 2) + Space(2) + "御中"
           ActiveSheet.Range("G3").Value = seirekiComboBox2.Text + "年" + monthComboBox2.Text + "月" + dayComboBox.Text + "日"
           ActiveSheet.Range("C45").Value = seirekiComboBox3.Text + "年" + monthComboBox3.Text + "月" + dayComboBox2.Text + "日"
           '///////////送り主の情報///////////
